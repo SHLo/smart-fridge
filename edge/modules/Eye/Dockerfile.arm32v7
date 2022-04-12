@@ -1,0 +1,27 @@
+FROM shlo/smart-pillbox:deps.arm32v7
+
+RUN pip install --no-cache-dir \
+    requests \
+    asyncio \
+    tornado==4.5.3 \
+    azure-iot-device \
+    azure-mgmt-iothub \
+    azure-core \
+    azure-cosmos \
+    azure-cognitiveservices-vision-face \
+    pyttsx3 \
+    gpiozero \
+    tzupdate \
+    azure-cognitiveservices-vision-computervision
+
+
+WORKDIR /app
+
+#COPY requirements.txt ./
+#RUN pip install -r requirements.txt
+
+COPY . .
+
+ENTRYPOINT ["bash", "init.sh"]
+
+# sudo docker run --privileged=true --device /dev/vchiq --device /dev/snd

@@ -1,0 +1,55 @@
+FROM arm32v7/python:3.10-bullseye
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    vim \
+    make \
+    cmake \
+    gcc \
+    libcurl4-openssl-dev \
+    libffi-dev \
+    libfreetype6-dev \
+    libjpeg-dev \
+    libpulse-dev \
+    libssl-dev \
+    swig \
+    zlib1g-dev \
+    alsa-utils \
+    espeak
+
+# Required for OpenCV
+RUN apt-get install -y \
+    # Hierarchical Data Format
+    libhdf5-dev libhdf5-serial-dev \
+    # for image files
+    libjpeg-dev libtiff5-dev libpng-dev \
+    # libjasper-dev\
+    # for video files
+    libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
+    # for gui
+    #libqt4-test libqtgui4 libqtwebkit4 libgtk2.0-dev \
+    # high def image processing
+    libilmbase-dev libopenexr-dev
+
+# Required for OpenCV
+RUN pip install --no-cache-dir \
+    numpy \
+    opencv-contrib-python \
+    opencv-python
+
+# Required for RPi.GPIO
+RUN wget https://github.com/joan2937/pigpio/archive/master.zip && \
+    unzip master.zip && \
+    cd pigpio-master && \
+    make && \
+    make install
+
+RUN CFLAGS=-fcommon pip install RPi.GPIO
+
+
+
+
+
+
+# sudo docker run --privileged=true --device /dev/vchiq --device /dev/snd
