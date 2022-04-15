@@ -98,8 +98,86 @@
               },
               "CV_PUBLISHED_NAME": {
                 "value": "$CV_PUBLISHED_NAME"
+              },
+              "COG_SRV_ENDPOINT": {
+                "value": "$COG_SRV_ENDPOINT"
+              },
+              "COG_SRV_KEY": {
+                "value": "$COG_SRV_KEY"
+              },
+              "RECOGNIZED_TYPES": {
+                "value": "$RECOGNIZED_TYPES"
               }
             }
+          },
+          "Mouth": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Mouth}",
+              "createOptions": {
+                "HostConfig": {
+                  "Devices": [
+                    {
+                      "PathOnHost": "/dev/snd",
+                      "PathInContainer": "/dev/snd",
+                      "CgroupPermissions": "mrw"
+                    }
+                  ]
+                }
+              }
+            },
+            "env": {
+              "AWS_DEFAULT_REGION": {
+                "value": "$AWS_DEFAULT_REGION"
+              },
+              "AWS_ACCESS_KEY_ID": {
+                "value": "$AWS_ACCESS_KEY_ID"
+              },
+              "AWS_SECRET_ACCESS_KEY": {
+                "value": "$AWS_SECRET_ACCESS_KEY"
+              }
+            }
+          },
+          "Tray": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Tray}",
+              "createOptions": {
+                "HostConfig": {
+                  "Privileged": true,
+                  "Devices": [
+                    {
+                      "PathOnHost": "/dev/gpiomem",
+                      "PathInContainer": "/dev/gpiomem",
+                      "CgroupPermissions": "mrw"
+                    }
+                  ]
+                }
+              }
+            },
+            "env": {}
+          },
+          "Freshness": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Freshness}",
+              "createOptions": {
+                "HostConfig": {
+                  "Privileged": true,
+                  "Bind": ["/dev:/dev"]
+                }
+              }
+            },
+            "env": {}
           }
         }
       }
@@ -107,7 +185,9 @@
     "$edgeHub": {
       "properties.desired": {
         "schemaVersion": "1.1",
-        "routes": {},
+        "routes": {
+          "EyeToMouth": "FROM /messages/modules/Eye/outputs/mouth INTO BrokeredEndpoint(\"/modules/Mouth/inputs/script\")"
+        },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
         }

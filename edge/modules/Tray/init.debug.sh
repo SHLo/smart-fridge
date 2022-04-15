@@ -1,0 +1,1 @@
+pigpiod && tail -f /dev/null

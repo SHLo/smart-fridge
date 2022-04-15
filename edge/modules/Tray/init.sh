@@ -1,0 +1,1 @@
+pigpiod && python main.py

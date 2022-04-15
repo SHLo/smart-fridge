@@ -2,7 +2,7 @@
   "$schema-version": "0.0.1",
   "description": "",
   "image": {
-    "repository": "shlo/smart-fridge-eye",
+    "repository": "shlo/smart-fridge-tray",
     "tag": {
       "version": "0.0.0.4",
       "platforms": {

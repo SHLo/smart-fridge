@@ -1,0 +1,25 @@
+FROM arm32v7/python:3.10-bullseye
+
+RUN apt-get update && apt-get install -y \
+    vim \
+    git
+
+# Required for RPi.GPIO
+RUN wget https://github.com/joan2937/pigpio/archive/master.zip && \
+    unzip master.zip && \
+    cd pigpio-master && \
+    make && \
+    make install
+
+RUN CFLAGS=-fcommon pip install RPi.GPIO
+
+RUN pip install --no-cache-dir \
+    azure-iot-device \
+    gpiozero \
+    spidev
+
+WORKDIR /app
+
+COPY . .
+
+ENTRYPOINT ["bash", "init.sh"]
