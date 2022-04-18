@@ -12,7 +12,7 @@ import collections
 CV_PREDICTION_KEY = os.environ['CV_PREDICTION_KEY']
 CV_ENDPOINT = os.environ['CV_ENDPOINT']
 CV_PROJECT_ID = os.environ['CV_PROJECT_ID']
-CV_PUBLISHED_NAME = 'Iteration4'
+CV_PUBLISHED_NAME = os.environ['CV_PUBLISHED_NAME']
 COG_SRV_ENDPOINT = os.environ['COG_SRV_ENDPOINT']
 COG_SRV_KEY = os.environ['COG_SRV_KEY']
 RECOGNIZED_TYPES = os.environ['RECOGNIZED_TYPES']
@@ -33,13 +33,18 @@ def inference(img):
     result = predictor.detect_image(CV_PROJECT_ID, CV_PUBLISHED_NAME, io.BytesIO(img))
     predictions = result.predictions
 
+    ret = collections.defaultdict(int)
+
     for prediction in predictions:
         if '[Auto-Generated]' in prediction.tag_name:
             continue
-        logger.warning(f'inference result: {prediction.__dict__}')
-        logger.warning(f'inference bounding_box: {prediction.bounding_box.__dict__}')
+        ret[prediction.tag_name] += 1
+        # logger.warning(f'inference result: {prediction.__dict__}')
+        # logger.warning(f'inference bounding_box: {prediction.bounding_box.__dict__}')
 
-    return result
+    logger.warning(f'inference result: {ret}')
+
+    return ret
 
 
 def inference_general(img):
