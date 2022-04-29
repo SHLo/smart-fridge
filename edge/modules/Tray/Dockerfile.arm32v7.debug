@@ -16,7 +16,8 @@ RUN CFLAGS=-fcommon pip install RPi.GPIO
 RUN pip install --no-cache-dir \
     azure-iot-device \
     gpiozero \
-    spidev
+    spidev \
+    pyserial
 
 WORKDIR /app
 

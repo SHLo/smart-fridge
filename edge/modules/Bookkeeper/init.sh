@@ -1,0 +1,1 @@
+tzupdate && python main.py

@@ -2,9 +2,9 @@
   "$schema-version": "0.0.1",
   "description": "",
   "image": {
-    "repository": "shlo/smart-fridge-eye",
+    "repository": "shlo/smart-fridge-bookkeeper",
     "tag": {
-      "version": "0.0.0.6",
+      "version": "0.0.0.1",
       "platforms": {
         "arm32v7": "./Dockerfile.arm32v7",
         "arm32v7.debug": "./Dockerfile.arm32v7.debug"

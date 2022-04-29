@@ -17,6 +17,8 @@ async def snap(client):
     if not result:
         return
 
+    items_data = {'event_type': 'items', 'payload': result}
+    await bookkeeping(items_data, client)
     script = dict_to_script(result)
     await speak(script, client)
 
@@ -29,4 +31,9 @@ async def speak(text, client):
     await client.send_message_to_output(Message(json.dumps(
         {'text': text}), content_encoding='utf-8', content_type='application/json'), 'mouth')
     await asyncio.sleep(5)
+
+
+async def bookkeeping(data, client):
+    await client.send_message_to_output(Message(json.dumps(data
+    ), content_encoding='utf-8', content_type='application/json'), 'bookkeeper')
 
