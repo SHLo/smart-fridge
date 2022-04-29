@@ -24,7 +24,7 @@ async def snap(client):
 
 
 def dict_to_script(result_dict):
-    return ', '.join([f'{count} {object_type}' for object_type, count in result_dict.items()])
+    return ', '.join([f'{object_type}' for object_type in result_dict])
 
 
 async def speak(text, client):
