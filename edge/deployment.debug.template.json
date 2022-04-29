@@ -195,22 +195,6 @@
                 "value": "$CATEGORIES_CONTAINER_ID"
               }
             }
-          },
-          "Freshness": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "${MODULES.Freshness.debug}",
-              "createOptions": {
-                "HostConfig": {
-                  "Privileged": true,
-                  "Bind": ["/dev:/dev"]
-                }
-              }
-            },
-            "env": {}
           }
         }
       }

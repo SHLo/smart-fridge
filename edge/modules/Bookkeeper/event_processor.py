@@ -1,5 +1,6 @@
 import logging
 import datetime
+import db
 
 logger = logging.getLogger('__name__')
 
@@ -24,7 +25,10 @@ def process(input_name, data):
 
 
 def process_gas(payload):
-    pass
+    for category, value in payload.items():
+        logger.warning(f'update gas value of {category} to {value}')
+        db.update_gas_value(category, value)
+
 
 def process_pressure_change(payload):
     now = datetime.datetime.now()
@@ -41,6 +45,9 @@ def process_pressure_change(payload):
         
         logger.warning(f'add items into DB: {items}')
 
+        for category in items:
+            db.update_count(category, 1)
+
 
 def process_items(payload):
     now = datetime.datetime.now()
@@ -55,7 +62,5 @@ def process_items(payload):
     
     logger.warning(f'subtract items into DB: {payload}')
 
-
-
-    
-
+    for category in payload:
+        db.update_count(category, -1)
