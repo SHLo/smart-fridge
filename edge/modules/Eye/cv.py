@@ -47,6 +47,27 @@ def inference(img):
     return ret
 
 
+def inference_class(img):
+    _, img = cv2.imencode('.jpg', img)
+
+    with open('./snap.jpg', 'wb') as f:
+        f.write(img)
+    
+    result = predictor.classify_image(CV_PROJECT_ID, CV_PUBLISHED_NAME, io.BytesIO(img))
+    predictions = result.predictions
+
+    ret = collections.defaultdict(int)
+
+    for prediction in predictions:
+        if '[Auto-Generated]' in prediction.tag_name:
+            continue
+        ret[prediction.tag_name] += 1
+
+    logger.warning(f'inference result: {ret}')
+
+    return ret
+
+
 def inference_general(img):
     _, img = cv2.imencode('.jpg', img)
 
