@@ -161,23 +161,40 @@
                 }
               }
             },
-            "env": {}
+            "env": {
+              "PRESSURE_THRESHOLD": {
+                "value": "$PRESSURE_THRESHOLD"
+              },
+              "GAS_MONITORING_PERIOD": {
+                "value": "$GAS_MONITORING_PERIOD"
+              }
+            }
           },
-          "Freshness": {
+          "Bookkeeper": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.Freshness}",
+              "image": "${MODULES.Bookkeeper}",
               "createOptions": {
-                "HostConfig": {
-                  "Privileged": true,
-                  "Bind": ["/dev:/dev"]
-                }
+                "HostConfig": {}
               }
             },
-            "env": {}
+            "env": {
+              "DB_HOST": {
+                "value": "$DB_HOST"
+              },
+              "DB_KEY": {
+                "value": "$DB_KEY"
+              },
+              "DATABASE_ID": {
+                "value": "$DATABASE_ID"
+              },
+              "CATEGORIES_CONTAINER_ID": {
+                "value": "$CATEGORIES_CONTAINER_ID"
+              }
+            }
           }
         }
       }
@@ -186,7 +203,9 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "EyeToMouth": "FROM /messages/modules/Eye/outputs/mouth INTO BrokeredEndpoint(\"/modules/Mouth/inputs/script\")"
+          "EyeToMouth": "FROM /messages/modules/Eye/outputs/mouth INTO BrokeredEndpoint(\"/modules/Mouth/inputs/script\")",
+          "EyeToBookkeeper": "FROM /messages/modules/Eye/outputs/bookkeeper INTO BrokeredEndpoint(\"/modules/Bookkeeper/inputs/eye\")",
+          "TrayToBookkeeper": "FROM /messages/modules/Tray/outputs/bookkeeper INTO BrokeredEndpoint(\"/modules/Bookkeeper/inputs/tray\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
