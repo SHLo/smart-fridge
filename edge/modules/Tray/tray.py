@@ -1,4 +1,4 @@
-import pressure_reader
+# import pressure_reader
 import asyncio
 import os
 import json
@@ -13,8 +13,8 @@ logger = logging.getLogger('__name__')
 async def pressure_event_monitor(client):
     last_pressure = 0
     counter = 0
-    gas_data = {'event_type': 'gas', 'payload': None}
-    pressure_data = {'event_type': 'pressure_change', 'payload': None}
+    gas_data = {'event_type': 'gas', 'payload': {}}
+    pressure_data = {'event_type': 'pressure_change', 'payload': {}}
 
     while True:
         # pressure = pressure_reader.readadc()
@@ -22,11 +22,13 @@ async def pressure_event_monitor(client):
         logger.warning(f'pressure: {pressure}')
         pressure_diff = pressure - last_pressure
         if pressure_diff > PRESSURE_THRESHOLD:
-            pressure_data['payload'] = 'increase'
+            pressure_data['payload']['change_type'] = 'increase'
+            pressure_data['payload']['current_weight'] = pressure
             await bookkeeping(pressure_data, client)
         
         if pressure_diff < -PRESSURE_THRESHOLD:
-            pressure_data['payload'] = 'decrease'
+            pressure_data['payload']['change_type'] = 'decrease'
+            pressure_data['payload']['current_weight'] = pressure
             await bookkeeping(pressure_data, client)
 
         last_pressure = pressure

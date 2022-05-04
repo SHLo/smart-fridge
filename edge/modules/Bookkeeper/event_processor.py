@@ -1,6 +1,10 @@
 import logging
 import datetime
 import db
+from azure.iot.device import Message
+import asyncio
+import json
+
 
 logger = logging.getLogger('__name__')
 
@@ -9,12 +13,14 @@ now = datetime.datetime.now()
 last_items_detected = {'ts': now}
 last_pressure_event = {'ts': now}
 
-def process(input_name, data):
+# logger.warning(f'{db.category_table}')
+
+async def process(input_name, data, client):
     logger.warning(f'event comes from {input_name}: {data}')
 
     if input_name == 'tray':
         if data['event_type'] == 'gas':
-            process_gas(data['payload'])
+            await process_gas(data['payload'], client)
 
         if data['event_type'] == 'pressure_change':
             process_pressure_change(data['payload'])
@@ -24,10 +30,24 @@ def process(input_name, data):
             process_items(data['payload'])
 
 
-def process_gas(payload):
-    for category, value in payload.items():
-        logger.warning(f'update gas value of {category} to {value}')
-        db.update_gas_value(category, value)
+async def process_gas(payload, client):
+    for position, value in payload.items():
+        category, _ = position.split('-')
+
+        isFresh = True
+
+        if value > db.category_table[category]['gasThreshold']:
+            isFresh = False
+            await speak(f'food in {position} has become stale', client)
+            
+        logger.warning(f'update gas value of {position} to {value}')
+        db.update_gas_value(position, value, isFresh)
+
+
+async def speak(text, client):
+    await client.send_message_to_output(Message(json.dumps(
+        {'text': text}), content_encoding='utf-8', content_type='application/json'), 'mouth')
+    await asyncio.sleep(5)
 
 
 def process_pressure_change(payload):
@@ -35,7 +55,7 @@ def process_pressure_change(payload):
     last_pressure_event['ts'] = now
     last_pressure_event['payload'] = payload
 
-    if payload == 'increase':
+    if payload['change_type'] == 'increase':
         if (now - last_items_detected['ts']).total_seconds() > 5:
             return
         
@@ -46,7 +66,8 @@ def process_pressure_change(payload):
         logger.warning(f'add items into DB: {items}')
 
         for category in items:
-            db.update_count(category, 1)
+            # db.update_count(category, 1)
+            db.insert_item(category, payload['current_weight'])
 
 
 def process_items(payload):
@@ -54,13 +75,15 @@ def process_items(payload):
     last_items_detected['ts'] = now
     last_items_detected['payload'] = payload
     
-    if last_pressure_event.get('payload', '') != 'decrease':
+    
+    if not last_pressure_event.get('payload') or last_pressure_event['payload'].get('change_type', '') != 'increase':
         return
     
     if (now - last_pressure_event['ts']).total_seconds() > 5:
         return
     
-    logger.warning(f'subtract items into DB: {payload}')
+    logger.warning(f'add items into DB: {payload}')
 
     for category in payload:
-        db.update_count(category, -1)
+        # db.update_count(category, 1)
+        db.insert_item(category, last_pressure_event['payload']['current_weight'])

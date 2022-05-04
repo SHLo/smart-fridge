@@ -7,7 +7,7 @@ import sys
 import signal
 import threading
 import json
-from azure.iot.device import IoTHubModuleClient, MethodResponse
+from azure.iot.device.aio import IoTHubModuleClient
 import logging
 import event_processor
 
@@ -22,10 +22,10 @@ def create_client():
     client = IoTHubModuleClient.create_from_edge_environment()
 
     # Define function for handling received messages
-    def receive_message_handler(message):
+    async def receive_message_handler(message):
         # NOTE: This function only handles messages sent to 'input1'.
         # Messages sent to other inputs, or to the default, will be discarded
-        event_processor.process(message.input_name, json.loads(message.data))
+        await event_processor.process(message.input_name, json.loads(message.data), client)
 
     try:
         # Set handler on the client

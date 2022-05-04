@@ -12,7 +12,7 @@ async def snap(client):
     _, img = cap.read()
     cap.release()
 
-    result = cv.inference_general(img)
+    result = cv.inference_class(img)
 
     if not result:
         return

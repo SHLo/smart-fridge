@@ -193,6 +193,9 @@
               },
               "CATEGORIES_CONTAINER_ID": {
                 "value": "$CATEGORIES_CONTAINER_ID"
+              },
+              "WAREHOUSE_CONTAINER_ID": {
+                "value": "$WAREHOUSE_CONTAINER_ID"
               }
             }
           }
@@ -204,6 +207,7 @@
         "schemaVersion": "1.1",
         "routes": {
           "EyeToMouth": "FROM /messages/modules/Eye/outputs/mouth INTO BrokeredEndpoint(\"/modules/Mouth/inputs/script\")",
+          "BookkeeperToMouth": "FROM /messages/modules/Bookkeeper/outputs/mouth INTO BrokeredEndpoint(\"/modules/Mouth/inputs/script\")",
           "EyeToBookkeeper": "FROM /messages/modules/Eye/outputs/bookkeeper INTO BrokeredEndpoint(\"/modules/Bookkeeper/inputs/eye\")",
           "TrayToBookkeeper": "FROM /messages/modules/Tray/outputs/bookkeeper INTO BrokeredEndpoint(\"/modules/Bookkeeper/inputs/tray\")"
         },
