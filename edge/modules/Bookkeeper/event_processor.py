@@ -67,7 +67,7 @@ def process_pressure_change(payload):
 
         for category in items:
             # db.update_count(category, 1)
-            db.insert_item(category, payload['current_weight'])
+            db.insert_item(category, payload['current_weight'] / 100.0)
 
 
 def process_items(payload):
@@ -86,4 +86,4 @@ def process_items(payload):
 
     for category in payload:
         # db.update_count(category, 1)
-        db.insert_item(category, last_pressure_event['payload']['current_weight'])
+        db.insert_item(category, last_pressure_event['payload']['current_weight'] / 100.0)
