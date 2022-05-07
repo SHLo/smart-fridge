@@ -59,7 +59,7 @@ def inference_class(img):
     ret = collections.defaultdict(int)
 
     for prediction in predictions:
-        if '[Auto-Generated]' in prediction.tag_name or prediction.probability < 0.8:
+        if '[Auto-Generated]' in prediction.tag_name or prediction.probability < 0.95:
             continue
         ret[prediction.tag_name] += 1
         # logger.warning(f'inference result: {prediction}')
