@@ -15,12 +15,14 @@ async def snap(client):
     result = cv.inference_class(img)
 
     if not result:
-        return
+        return False
 
     items_data = {'event_type': 'items', 'payload': result}
     await bookkeeping(items_data, client)
     script = dict_to_script(result)
     await speak(script, client)
+    
+    return True
 
 
 def dict_to_script(result_dict):

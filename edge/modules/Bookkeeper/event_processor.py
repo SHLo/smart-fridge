@@ -51,36 +51,18 @@ async def speak(text, client):
 
 
 def process_pressure_change(payload):
+    if payload['change_type'] != 'increase':
+        return
+
     now = datetime.datetime.now()
     last_pressure_event['ts'] = now
     last_pressure_event['payload'] = payload
-
-    if payload['change_type'] == 'increase':
-        if (now - last_items_detected['ts']).total_seconds() > 5:
-            return
-        
-        items = last_items_detected.get('payload')
-        if not items:
-            return
-        
-        logger.warning(f'add items into DB: {items}')
-
-        for category in items:
-            # db.update_count(category, 1)
-            db.insert_item(category, payload['current_weight'] / 100.0)
 
 
 def process_items(payload):
     now = datetime.datetime.now()
     last_items_detected['ts'] = now
     last_items_detected['payload'] = payload
-    
-    
-    if not last_pressure_event.get('payload') or last_pressure_event['payload'].get('change_type', '') != 'increase':
-        return
-    
-    if (now - last_pressure_event['ts']).total_seconds() > 5:
-        return
     
     logger.warning(f'add items into DB: {payload}')
 

@@ -45,6 +45,11 @@ async def pressure_event_monitor(client):
 async def bookkeeping(data, client):
     logger.warning(f'event data: {data}')
     await client.send_message_to_output(Message(json.dumps(data), content_encoding='utf-8', content_type='application/json'), 'bookkeeper')
+    
     if data['event_type'] == 'pressure_change':
+        if data['payload']['change_type'] == 'increase':
+            await client.send_message_to_output(Message(json.dumps(data), content_encoding='utf-8', content_type='application/json'), 'eye')
         await asyncio.sleep(3)
+
+
         

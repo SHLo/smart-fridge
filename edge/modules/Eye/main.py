@@ -23,6 +23,7 @@ DATABASE_ID = os.getenv('DATABASE_ID')
 # Event indicating client stop
 stop_event = threading.Event()
 
+busy = False
 
 def create_client():
     client = IoTHubModuleClient.create_from_edge_environment()
@@ -31,13 +32,17 @@ def create_client():
     async def receive_message_handler(message):
         # NOTE: This function only handles messages sent to "input1".
         # Messages sent to other inputs, or to the default, will be discarded
-        if message.input_name == "input1":
-            print("the data in the message received on input1 was ")
-            print(message.data)
-            print("custom properties are")
-            print(message.custom_properties)
-            print("forwarding mesage to output1")
-            await client.send_message_to_output(message, "output1")
+        global busy 
+        if message.input_name == "tray" and not busy:
+            busy = True
+            while True:
+                if await eye.snap(client) is True:
+                    busy = False
+                    break
+                await asyncio.sleep(0.3)
+
+            # while not await eye.snap(client):
+            #     await asyncio.sleep(0.3)
 
     try:
         # Set handler on the client
@@ -55,8 +60,9 @@ async def run_sample(client):
     # e.g. sending messages
 
     while True:
-        await eye.snap(client)
-        await asyncio.sleep(0.3)
+        # await eye.snap(client)
+        # await asyncio.sleep(0.3)
+        await asyncio.sleep(1000)
 
 
 def main():
