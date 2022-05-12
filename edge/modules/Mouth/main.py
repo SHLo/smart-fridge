@@ -10,6 +10,7 @@ import mouth
 import json
 import logging
 from azure.iot.device.aio import IoTHubModuleClient
+from azure.iot.device import MethodResponse
 from collections import deque
 
 logger = logging.getLogger('__name__')
@@ -35,9 +36,30 @@ def create_client():
             text = json.loads(message.data)['text']
             speech_queue.append(text)
 
+
+    async def method_request_handler(method_request):
+        request_name = method_request.name
+        request_payload = method_request.payload
+
+        logger.warning(
+            f'receive direct method: {request_name}, {request_payload}')
+
+        if request_name == 'speak':
+            status = 200
+            try:
+                text = request_payload['text']
+                speech_queue.append(text)
+            except:
+                status = 400
+
+        method_response = MethodResponse.create_from_method_request(
+            method_request, status, {})
+        await client.send_method_response(method_response)
+
     try:
         # Set handler on the client
         client.on_message_received = receive_message_handler
+        client.on_method_request_received = method_request_handler
     except:
         # Cleanup if failure occurs
         client.shutdown()
@@ -45,6 +67,7 @@ def create_client():
 
     return client
 
+    
 
 async def run_sample(client):
     # Customize this coroutine to do whatever tasks the module initiates
@@ -52,6 +75,7 @@ async def run_sample(client):
     while True:
         if speech_queue:
             text = speech_queue.popleft()
+            logger.warning(f'speak: {text}')
             mouth.speak(text)
 
 
