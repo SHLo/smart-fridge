@@ -2,5 +2,11 @@
   "azure-iot-edge.defaultPlatform": {
     "platform": "arm32v7",
     "alias": null
-  }
+  },
+  "azureFunctions.deploySubpath": "azure-function",
+  "azureFunctions.scmDoBuildDuringDeployment": true,
+  "azureFunctions.pythonVenv": ".venv",
+  "azureFunctions.projectLanguage": "Python",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen"
 }
