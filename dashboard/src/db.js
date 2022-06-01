@@ -33,7 +33,8 @@ async function prepareData() {
     item["Sensor Data"] = item.gasValue;
     item["Weight(kg)"] = item.weight;
     item["Date"] = item.inTime;
-    item["Freshness"] = item.isFresh ? "Fresh" : "Not Fresh";
+    item["Freshness"] =
+      item.gasValue < item.gasThreshold ? "Fresh" : "Not Fresh";
     item["Food Allergies Category"] = item.allergy;
 
     return item;
