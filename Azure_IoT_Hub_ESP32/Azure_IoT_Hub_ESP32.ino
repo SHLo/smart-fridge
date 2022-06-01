@@ -80,8 +80,10 @@ static char telemetry_topic[128];
 static uint8_t telemetry_payload[100];
 static uint32_t telemetry_send_count = 0;
 
-#define gas1Pin 34
-#define gas2Pin 35
+//#define gas1Pin 34
+#define gas1Pin A0
+//#define gas2Pin 35
+#define gas2Pin A3
 
 
 #define INCOMING_DATA_BUFFER_SIZE 128
