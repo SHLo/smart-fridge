@@ -34,13 +34,15 @@ function MyTable() {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
-          <tr key={row.itemId}>
-            {columns.map((column) => (
-              <td key={column}>{row[column]}</td>
-            ))}
-          </tr>
-        ))}
+        {rows
+          .filter((row) => row.weight > 0)
+          .map((row) => (
+            <tr key={row.itemId}>
+              {columns.map((column) => (
+                <td key={column}>{row[column]}</td>
+              ))}
+            </tr>
+          ))}
       </tbody>
     </Table>
   );
